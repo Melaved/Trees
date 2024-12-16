@@ -129,16 +129,23 @@
   <ItemGroup>
     <ClCompile Include="BinarySearchTree.cpp" />
     <ClCompile Include="BinarySearchTree_IO.cpp" />
+    <ClCompile Include="BinaryTreeNode.cpp" />
     <ClCompile Include="Laboratory_Work_5.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="SupportMethods.cpp" />
+    <ClCompile Include="Treap.cpp" />
     <ClCompile Include="TreapNode.cpp" />
-    <ClCompile Include="TreapNode_IO.cpp" />
+    <ClCompile Include="Treap_IO.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BinaryTree.h" />
+    <ClInclude Include="BinarySearchTree_IO.h" />
+    <ClInclude Include="BinarySearchTree.h" />
+    <ClInclude Include="BinaryTreeNode.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="SupportMethods.h" />
+    <ClInclude Include="Treap.h" />
     <ClInclude Include="TreapNode.h" />
+    <ClInclude Include="Treap_IO.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,170 +1,25 @@
-//#include <cstdlib> 
-//#include "TreapNode.h"
-//using namespace std;
-//
-//
-//struct TreapNode
-//{
-//    int key;
-//    int priority;
-//    TreapNode* left;
-//    TreapNode* right;
-//
-//    TreapNode(int key) : key(key), priority(rand()), left(nullptr), right(nullptr) {}
-//};
-//
-//TreapNode* merge(TreapNode* left, TreapNode* right)
-//{
-//    if (!left)
-//    {
-//        return right;
-//    }
-//    if (!right) 
-//    {
-//        return left;
-//    }
-//
-//    if (left->priority > right->priority)
-//    {
-//        left->right = merge(left->right, right);
-//        return left;
-//    }
-//    else 
-//    {
-//        right->left = merge(left, right->left);
-//        return right;
-//    }
-//}
+#include <cstdlib>
+#include "TreapNode.h"
 
-//void split(TreapNode* root, int key, TreapNode*& left, TreapNode*& right)
-//{
-//    if (!root) 
-//    {
-//        left = right = nullptr;
-//        return;
-//    }
-//
-//    if (root->key <= key) 
-//    {
-//        left = root;
-//        split(root->right, key, left->right, right);
-//    }
-//    else 
-//    {
-//        right = root;
-//        split(root->left, key, left, right->left);
-//    }
-//}
-//
-//
-//void insertUnoptimized(TreapNode*& root, int key) 
-//{
-//    TreapNode* newNode = new TreapNode(key);
-//    TreapNode* left, * right;
-//
-//    split(root, key, left, right);
-//
-//    root = merge(merge(left, newNode), right);
-//}
-//
-//void insertOptimized(TreapNode*& root, int key) 
-//{
-//    TreapNode* newNode = new TreapNode(key);
-//    TreapNode* left, * right;
-//
-//    split(root, key, left, right);
-//
-//    newNode->left = left;
-//    newNode->right = right;
-//    root = newNode;
-//}
-//
-//void removeUnoptimized(TreapNode*& root, int key) 
-//{
-//    if (!root)
-//    {
-//        return;
-//    }
-//
-//    TreapNode* left, * middle, * right;
-//
-//    split(root, key - 1, left, middle);
-//
-//    split(middle, key, middle, right);
-//
-//    if (middle) 
-//    {
-//        delete middle;
-//      
-//        root = merge(left, right);
-//    }
-//    else 
-//    {
-//        root = merge(left, middle); 
-//    }
-//}
-//
-//void removeOptimized(TreapNode*& root, int key) 
-//{
-//    if (!root) return;
-//
-//    if (root->key == key)
-//    {
-//        TreapNode* oldNode = root;
-//        root = merge(root->left, root->right);
-//        delete oldNode;
-//    }
-//    else if (key < root->key)
-//    {
-//        removeOptimized(root->left, key);
-//    }
-//    else 
-//    {
-//        removeOptimized(root->right, key);
-//    }
-//}
-//
-//TreapNode* search(TreapNode* root, int key)
-//{
-//    if (!root || root->key == key)
-//    {
-//        return root;
-//    }
-//    if (key < root->key)
-//    {
-//        return search(root->left, key);
-//    }
-//    return search(root->right, key);
-//}
-//
-//void clear(TreapNode*& root) 
-//{
-//    if (!root) 
-//    {
-//        return;
-//    }
-//    clear(root->left);
-//    clear(root->right);
-//    delete root;
-//    root = nullptr;
-//}
-
-struct TreapNode 
+TreapNode* NewNode(int key) 
 {
-	int Key;
-	int Priority;
-	TreapNode* Left;
-	TreapNode* Right;
-};
+    TreapNode* node = new TreapNode();
+    node->Key = key;
+    node->Priority = rand(); 
+    node->Left = nullptr;
+    node->Right = nullptr;
+    return node;
+}
 
 void Split(TreapNode* node, int key, TreapNode*& left, TreapNode*& right) 
 {
 	if (node == nullptr) 
 	{
 		left = right = nullptr;
+        return;
 	}
 
-	if (node->Key <= key) 
+	else if (node->Key < key) 
 	{
 		left = node;
 		Split(node->Right, key, left->Right, right);
@@ -203,7 +58,7 @@ TreapNode* Merge(TreapNode* left, TreapNode* right)
 
 void InsertUnoptimized(TreapNode*& root, int key) 
 {
-    TreapNode* newNode = new TreapNode();
+    TreapNode* newNode = NewNode(key);
     TreapNode* left;
     TreapNode* right;
 
@@ -212,91 +67,64 @@ void InsertUnoptimized(TreapNode*& root, int key)
     root = Merge(Merge(left, newNode), right);
 }
 
-void InsertOptimized(TreapNode*& node, int key)
+void InsertOptimized(TreapNode*& root, int key) 
 {
-    TreapNode* newNode = new TreapNode();
 
-    if (node == nullptr)
-    {
-        node = newNode;
-        return;
-    }
-
-    TreapNode* current = node;
+    TreapNode* newNode = NewNode(key);
+    TreapNode* current = root;
     TreapNode* parent = nullptr;
 
-    while (current) {
+    while (current != nullptr && current->Priority > newNode->Priority) 
+    {
         parent = current;
 
-        if (current->Key < key)
+        if (key < current->Key) 
+        {
+            current = current->Left;
+        }
+        else 
         {
             current = current->Right;
         }
-
-        else
-        {
-            if (current->Priority < newNode->Priority)
-            {
-                break;
-            }
-            current = current->Left;
-        }
     }
 
-    TreapNode* leftSubtree = nullptr;
-    TreapNode* rightSubtree = nullptr;
+    TreapNode* left = nullptr;
+    TreapNode* right = nullptr;
+    Split(current, key, left, right);
 
-    if (parent)
+    newNode->Left = left;
+    newNode->Right = right;
+
+    if (parent == nullptr) 
     {
-        if (parent->Key < key) {
-            leftSubtree = parent;
-            rightSubtree = parent->Right;
-            parent->Right = nullptr;
-        }
-
-        else
-        {
-            leftSubtree = parent->Left;
-            rightSubtree = parent;
-            parent->Left = nullptr;
-        }
+        root = newNode;
     }
-
-    newNode->Left = leftSubtree;
-    newNode->Right = rightSubtree;
-
-    if (parent) 
+    else if (key < parent->Key)
     {
-
-        if (parent->Key < key) 
-        {
-            parent->Right = newNode;
-        }
-
-        else
-        {
-            parent->Left = newNode;
-        }
+        parent->Left = newNode;
     }
-
     else
     {
-        node = newNode;
+        parent->Right = newNode;
     }
 }
 
-void removeUnoptimized(TreapNode*& node, int key) 
+
+
+void RemoveUnoptimized(TreapNode*& node, int key) 
 {
     if (node == nullptr)
     {
         return;
     }
 
-    TreapNode* left, * middle, * right;
+    TreapNode* left;
+    TreapNode* middle;
+    TreapNode* right;
 
-    Split(node, key - 1, left, middle);
+    Split(node, key, left, middle);
 
-    Split(middle, key, middle, right);
+    Split(middle, key + 1, middle, right);
 
     if (middle) 
     {
@@ -310,9 +138,12 @@ void removeUnoptimized(TreapNode*& node, int key)
     }
 }
 
-void removeOptimized(TreapNode*& node, int key) 
+void RemoveOptimized(TreapNode*& node, int key) 
 {
-    if (!node) return;
+    if (node == nullptr)
+    {
+        return;
+    }
 
     if (node->Key == key)
     {
@@ -322,10 +153,36 @@ void removeOptimized(TreapNode*& node, int key)
     }
     else if (key < node->Key)
     {
-        removeOptimized(node->Left, key);
+        RemoveOptimized(node->Left, key);
     }
     else 
     {
-        removeOptimized(node->Right, key);
+        RemoveOptimized(node->Right, key);
     }
 }
+
+TreapNode* Search(TreapNode* node, int key)
+{
+    if (!node || node->Key == key)
+    {
+        return node;
+    }
+    if (key < node->Key)
+    {
+        return Search(node->Left, key);
+    }
+    return Search(node->Right, key);
+}
+
+void Clear(TreapNode*& node) 
+{
+    if (!node) 
+    {
+        return;
+    }
+    Clear(node->Left);
+    Clear(node->Right);
+    delete node;
+    node = nullptr;
+}
+
