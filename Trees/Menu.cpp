@@ -45,9 +45,10 @@ void Menu()
             }
 
             case 0:
-                ClearTree(binaryTree->Root);
-                Clear(treap->Root);
+            {
+                Clear(treap);
                 return;
+            }
         default:
             cout << "Invalid choice! Try again." << endl;
         }

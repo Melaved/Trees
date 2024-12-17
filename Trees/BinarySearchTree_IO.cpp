@@ -124,11 +124,6 @@ void BinaryTreeChoice(BinarySearchTree* binaryTree)
         ClearScreen();
         ShowBinaryTreeMenu();
 
-        if (binaryTree->Root == nullptr) 
-        {
-            binaryTree->Root = Insert(binaryTree->Root, GetIntInput("Enter root value: "));
-        }
-
         PrintBinaryTree(binaryTree->Root,1);
         int BinarySearchTreeChoice = GetIntInput("Your input: ");
 
@@ -138,21 +133,21 @@ void BinaryTreeChoice(BinarySearchTree* binaryTree)
             case 1:
             {
                 int data = GetIntInput("Enter data to insert: ");
-                Insert(binaryTree->Root, data); 
+                Insert(binaryTree, data); 
                 break;
             }
 
             case 2:
             {
                 int data = GetIntInput("Enter data to delete: ");
-                DeleteNode(binaryTree->Root, data); 
+                DeleteNode(binaryTree, data); 
                 break;
             }
 
             case 3:
             {
                 int data = GetIntInput("Enter the data to search: ");
-                BinaryTreeNode* foundNode = Search(binaryTree->Root, data);
+                BinaryTreeNode* foundNode = Search(binaryTree, data);
                 if (foundNode == nullptr)
                 {
                     cout << "\nNo node found \n";
@@ -166,7 +161,7 @@ void BinaryTreeChoice(BinarySearchTree* binaryTree)
 
             case 4: 
             {
-                BinaryTreeNode* minNode = FindMinValue(binaryTree->Root);
+                BinaryTreeNode* minNode = FindMinValue(binaryTree);
                 if (minNode != nullptr)
                 {
                     cout << "Min value in the tree: " << minNode->Data << endl;
@@ -180,7 +175,7 @@ void BinaryTreeChoice(BinarySearchTree* binaryTree)
 
             case 5:
             {
-                BinaryTreeNode* maxNode = FindMaxValue(binaryTree->Root);
+                BinaryTreeNode* maxNode = FindMaxValue(binaryTree);
                 if (maxNode != nullptr)
                 {
                     cout << "Max value in the tree: " << maxNode->Data << endl;
@@ -224,7 +219,7 @@ void BinaryTreeChoice(BinarySearchTree* binaryTree)
             {
                 ClearScreen();
                 ShowMainMenu();
-                ClearTree(binaryTree->Root);
+                ClearTree(binaryTree);
                 return;
             }
 

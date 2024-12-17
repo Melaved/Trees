@@ -55,22 +55,22 @@ void TreapChoice(Treap* treap)
         ClearScreen();
         ShowTreapMenu();
         PrintTreap(treap->Root, 1);
-        int TreapChoice = GetIntInput("Your input: ");
+        int treapChoice = GetIntInput("Your input: ");
 
-        switch (TreapChoice)
+        switch (treapChoice)
         {
 
             case 1:
             {
                 int data = GetIntInput("Enter key to insert: ");
-                InsertOptimized(treap->Root, data);
+                InsertOptimized(treap, data);
                 break;
             }
 
             case 2:
             {
                 int data = GetIntInput("Enter key to insert: ");
-                InsertUnoptimized(treap->Root, data);
+                InsertUnoptimized(treap, data);
                 break;
 
             }
@@ -78,21 +78,21 @@ void TreapChoice(Treap* treap)
             case 3:
             {
                 int data = GetIntInput("Enter key to delete: ");
-                RemoveOptimized(treap->Root, data);
+                RemoveOptimized(treap, data);
                 break;
             }
 
             case 4:
             {
                 int data = GetIntInput("Enter key to delete: ");
-                RemoveUnoptimized(treap->Root, data);
+                RemoveUnoptimized(treap, data);
                 break;
             }
 
             case 5:
             {
                 int data = GetIntInput("Enter the data to search: ");
-                TreapNode* foundNode = Search(treap->Root, data);
+                TreapNode* foundNode = Search(treap, data);
                 if (foundNode == nullptr)
                 {
                     cout << "\nNo node found \n";
@@ -108,7 +108,7 @@ void TreapChoice(Treap* treap)
             {
                 ClearScreen();
                 ShowMainMenu();
-                Clear(treap->Root);
+                Clear(treap);
                 return;
             }
 
