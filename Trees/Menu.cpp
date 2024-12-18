@@ -46,7 +46,7 @@ void Menu()
 
             case 0:
             {
-                Clear(treap);
+                Clear(treap->Root);
                 return;
             }
         default:

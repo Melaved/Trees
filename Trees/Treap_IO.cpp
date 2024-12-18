@@ -25,7 +25,7 @@ void PrintTreap(TreapNode* node, int indent)
         return;
     }
 
-    if (node->Right)
+    if (node->Right != nullptr)
     {
         PrintTreap(node->Right, indent + 4);
     }
@@ -108,7 +108,7 @@ void TreapChoice(Treap* treap)
             {
                 ClearScreen();
                 ShowMainMenu();
-                Clear(treap);
+                Clear(treap->Root);
                 return;
             }
 

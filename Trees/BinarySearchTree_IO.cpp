@@ -161,10 +161,10 @@ void BinaryTreeChoice(BinarySearchTree* binaryTree)
 
             case 4: 
             {
-                BinaryTreeNode* minNode = FindMinValue(binaryTree);
+                BinarySearchTree* minNode = FindMinValue(binaryTree);
                 if (minNode != nullptr)
                 {
-                    cout << "Min value in the tree: " << minNode->Data << endl;
+                    cout << "Min value in the tree: " << minNode->Root->Data << endl;
                 }
                 else
                 {
@@ -175,10 +175,10 @@ void BinaryTreeChoice(BinarySearchTree* binaryTree)
 
             case 5:
             {
-                BinaryTreeNode* maxNode = FindMaxValue(binaryTree);
+                BinarySearchTree* maxNode = FindMaxValue(binaryTree);
                 if (maxNode != nullptr)
                 {
-                    cout << "Max value in the tree: " << maxNode->Data << endl;
+                    cout << "Max value in the tree: " << maxNode->Root->Data << endl;
                 }
                 else
                 {

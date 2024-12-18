@@ -1,4 +1,5 @@
 #include "Treap.h"
+#include <stdlib.h>
 
 Treap* CreateTreap()
 {
@@ -7,30 +8,21 @@ Treap* CreateTreap()
     return treap;
 }
 
-void Split(Treap* treap, int key, Treap*& left, Treap*& right) 
+void Split(TreapNode* node, int key, TreapNode*& left, TreapNode*& right)
 {
-    if (treap->Root == nullptr) 
+    if (node == nullptr)
     {
-        left = new Treap();
-        right = new Treap();
-        return;
+        left = right = nullptr;
     }
-
-    if (treap->Root->Key < key)
+    else if (node->Key <= key)
     {
-        left = new Treap();
-        left->Root = treap->Root;
-        Treap* tempRight;
-        Split(new Treap{ treap->Root->Right }, key, left, tempRight); 
-        right = tempRight; 
+        left = node;
+        Split(node->Right, key, left->Right, right); 
     }
     else
- {
-        right = new Treap();
-        right->Root = treap->Root;
-        Treap* tempLeft;
-        Split(new Treap{ treap->Root->Left }, key, tempLeft, right); 
-        left = tempLeft; 
+    {
+        right = node;
+        Split(node->Left, key, left, right->Left); 
     }
 }
 
@@ -44,143 +36,203 @@ TreapNode* Merge(TreapNode* left, TreapNode* right)
     {
         return left;
     }
-
     if (left->Priority > right->Priority)
     {
         left->Right = Merge(left->Right, right);
         return left;
     }
-    else {
+    else
+    {
         right->Left = Merge(left, right->Left);
         return right;
     }
 }
 
-void InsertUnoptimized(Treap* treap, int key) 
+
+Treap* InsertUnoptimized(Treap* treap, int key)
 {
     TreapNode* newNode = NewNode(key);
-    Treap* left = new Treap();
-    Treap* right = new Treap();
-
-    Split(treap, key, left, right);
-
-    treap->Root = Merge(Merge(left->Root, newNode), right->Root);
-}
-
-void InsertOptimized(Treap* treap, int key) {
-    TreapNode* newNode = NewNode(key);
-    if (treap->Root == nullptr) {
-        treap->Root = newNode;
-        return;
-    }
-
-    Treap* left = nullptr;
-    Treap* right = nullptr;
-
-    // Разделяем дерево на два поддерева
-    Split(treap, key, left, right);
-
-    // Если новый узел имеет больший приоритет, чем корень
-    if (newNode->Priority > treap->Root->Priority) {
-        newNode->Left = left->Root;  // Левое поддерево
-        newNode->Right = right->Root; // Правое поддерево
-        treap->Root = newNode;         // Новый корень
-    }
-    else {
-        // Вставляем новый узел в одно из поддеревьев
-        if (key < treap->Root->Key) {
-            newNode->Left = left->Root;
-            newNode->Right = right->Root;
-            treap->Root->Left = Merge(treap->Root->Left, newNode);
-        }
-        else {
-            newNode->Left = left->Root;
-            newNode->Right = right->Root;
-            treap->Root->Right = Merge(treap->Root->Right, newNode);
-        }
-    }
-
-    // Освобождаем временные структуры
-    delete left;
-    delete right;
-}
-
-
-void RemoveUnoptimized(Treap* treap, int key) 
-{
     if (treap->Root == nullptr)
     {
-        return;
+        treap->Root = newNode;
+        return treap;
     }
 
-    Treap* left = new Treap();
-    Treap* middle = new Treap();
-    Treap* right = new Treap();
+    TreapNode* left = nullptr;
+    TreapNode* right = nullptr;
+    Split(treap->Root, key, left, right);
+    treap->Root = Merge(Merge(left, newNode), right);
 
-    Split(treap, key, left, middle);
-    Split(middle, key + 1, middle, right);
-
-    if (middle->Root) 
-    {
-        delete middle->Root; 
-        treap->Root = Merge(left->Root, right->Root);
-    }
-    else 
-    {
-        treap->Root = Merge(left->Root, middle->Root);
-    }
+    return treap;
 }
 
-void RemoveOptimized(Treap* treap, int key) {
-    if (treap->Root == nullptr) return;
 
-    if (treap->Root->Key == key) 
+Treap* InsertOptimized(Treap* treap, int key)
+{
+    TreapNode* newNode = NewNode(key);
+    if (treap->Root == nullptr)
     {
-        TreapNode* oldNode = treap->Root;
-        treap->Root = Merge(treap->Root->Left, treap->Root->Right);
-        delete oldNode;
+        treap->Root = newNode;
+        return treap;
     }
-    else if (key < treap->Root->Key) 
+
+    if (newNode->Priority > treap->Root->Priority)
     {
-        RemoveOptimized(new Treap{ treap->Root->Left }, key);
+        TreapNode* left = nullptr;
+        TreapNode* right = nullptr;
+        Split(treap->Root, key, left, right);
+
+        newNode->Left = left;
+        newNode->Right = right;
+        treap->Root = newNode;
+        return treap;
+    }
+
+    TreapNode* current = treap->Root;
+    TreapNode* parent = nullptr;
+
+    while (current != nullptr)
+    {
+        parent = current;
+        if (key < current->Key) 
+        {
+            current = current->Left;
+        }
+        else
+        {
+            current = current->Right;
+        }
+    }
+
+    if (key < parent->Key)
+    {
+        parent->Left = InsertOptimized(new Treap{ parent->Left }, key)->Root;
     }
     else
     {
-        RemoveOptimized(new Treap{ treap->Root->Right }, key);
+        parent->Right = InsertOptimized(new Treap{ parent->Right }, key)->Root; 
     }
+
+    return treap;
 }
 
-TreapNode* Search(Treap* treap, int key)
-{
-    TreapNode* node = treap->Root;
 
-    while (node != nullptr)
+
+Treap* RemoveUnoptimized(Treap* treap, int key)
+{
+    if (treap->Root == nullptr)
     {
-        if (node->Key == key)
+        return treap;
+    }
+
+    TreapNode* left = nullptr;
+    TreapNode* right = nullptr;
+    Split(treap->Root, key, left, right);
+
+    TreapNode* midLeft = nullptr;
+    TreapNode* midRight = nullptr;
+    Split(left, key - 1, midLeft, midRight);
+
+    delete midRight;
+    treap->Root = Merge(midLeft, right);
+
+    return treap;
+}
+
+Treap* RemoveOptimized(Treap* treap, int key)
+{
+    if (treap->Root == nullptr)
+    {
+        return treap;
+    }
+
+    TreapNode* current = treap->Root;
+    TreapNode* parent = nullptr;
+
+    while (current != nullptr && current->Key != key)
+    {
+        parent = current;
+        if (key < current->Key)
         {
-            return node;
-        }
-        if (key < node->Key)
-        {
-            node = node->Left;
+            current = current->Left;
         }
         else 
         {
-            node = node->Right;
+            current = current->Right;
         }
-    }   return nullptr; 
+    }
+
+    if (current == nullptr)
+    {
+        return treap;
+    }
+
+    TreapNode* leftChild = current->Left;
+    TreapNode* rightChild = current->Right;
+
+    TreapNode* mergedChild = Merge(leftChild, rightChild);
+
+    if (current == treap->Root)
+    {
+        treap->Root = mergedChild;
+    }
+    else 
+    {
+        if (parent->Left == current)
+        {
+            parent->Left = mergedChild;
+        }
+        else 
+        {
+            parent->Right = mergedChild;
+        }
+    }
+
+    delete current;
+    return treap;
 }
 
-void Clear(Treap* treap) 
+
+TreapNode* Search(Treap* treap, int key)
 {
-    if (!treap || !treap->Root)
+    TreapNode* current = treap->Root;
+
+    while (current != nullptr)
+    {
+        if (current->Key == key)
+        {
+            return current;
+        }
+        else if (key < current->Key)
+        {
+            current = current->Left;
+        }
+        else
+        {
+            current = current->Right;
+        }
+    }
+
+    return nullptr;
+}
+
+void Clear(TreapNode*& node)
+{
+    if (!node)
     {
         return;
     }
 
-    Clear(new Treap{ treap->Root->Left });
-    Clear(new Treap{ treap->Root->Right });
+    Clear(node->Left);
+    Clear(node->Right);
 
-    delete treap->Root;
-    delete treap;
+    delete node;
+    node = nullptr;
 }
+
+void ClearTreap(Treap*& treap)
+{
+    Clear(treap->Root);
+    delete treap; 
+}
+
