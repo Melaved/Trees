@@ -94,7 +94,7 @@ Treap* InsertOptimized(Treap* treap, int key)
     while (current != nullptr)
     {
         parent = current;
-        if (key < current->Key) 
+        if (key < current->Key)
         {
             current = current->Left;
         }
@@ -106,17 +106,15 @@ Treap* InsertOptimized(Treap* treap, int key)
 
     if (key < parent->Key)
     {
-        parent->Left = InsertOptimized(new Treap{ parent->Left }, key)->Root;
+        parent->Left = newNode; 
     }
     else
     {
-        parent->Right = InsertOptimized(new Treap{ parent->Right }, key)->Root; 
+        parent->Right = newNode; 
     }
 
     return treap;
 }
-
-
 
 Treap* RemoveUnoptimized(Treap* treap, int key)
 {
@@ -127,23 +125,27 @@ Treap* RemoveUnoptimized(Treap* treap, int key)
 
     TreapNode* left = nullptr;
     TreapNode* right = nullptr;
+
     Split(treap->Root, key, left, right);
 
     TreapNode* midLeft = nullptr;
     TreapNode* midRight = nullptr;
+
     Split(left, key - 1, midLeft, midRight);
 
-    delete midRight;
+    if (midRight != nullptr) 
+    {
+        delete midRight;
+    }
     treap->Root = Merge(midLeft, right);
 
     return treap;
 }
-
 Treap* RemoveOptimized(Treap* treap, int key)
 {
     if (treap->Root == nullptr)
     {
-        return treap;
+        return treap; 
     }
 
     TreapNode* current = treap->Root;
@@ -156,7 +158,7 @@ Treap* RemoveOptimized(Treap* treap, int key)
         {
             current = current->Left;
         }
-        else 
+        else
         {
             current = current->Right;
         }
@@ -176,13 +178,13 @@ Treap* RemoveOptimized(Treap* treap, int key)
     {
         treap->Root = mergedChild;
     }
-    else 
+    else
     {
         if (parent->Left == current)
         {
             parent->Left = mergedChild;
         }
-        else 
+        else
         {
             parent->Right = mergedChild;
         }
